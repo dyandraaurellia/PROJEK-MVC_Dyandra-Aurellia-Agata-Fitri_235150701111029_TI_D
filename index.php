@@ -1,12 +1,26 @@
 <?php
 
-// Include controller
-include 'controllers/MovieController.php';
-include 'controllers/UserController.php';
-
 session_start();
+$conn = require 'config/db.php';
+require_once 'models/Movie.php';
+// Set koneksi database ke Movie class
+Movie::setConnection($conn);
 
-// Periksa apakah ada action di parameter URL
+// Include controllers
+require_once 'controllers/MovieController.php';
+require_once 'controllers/UserController.php';
+// Jika pengguna belum login dan mencoba mengakses selain login atau register, arahkan ke halaman login
+if (!isset($_SESSION['user']) && (!isset($_GET['action']) || !in_array($_GET['action'], ['login', 'register']))) {
+    header('Location: index.php?action=login');
+    exit();
+}
+
+// Jika pengguna sudah login dan mencoba mengakses login atau register, arahkan ke halaman home
+if (isset($_SESSION['user']) && isset($_GET['action']) && in_array($_GET['action'], ['login', 'register'])) {
+    header('Location: index.php?action=home');
+    exit();
+}
+
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
 
@@ -22,39 +36,55 @@ if (isset($_GET['action'])) {
             break;
 
         case 'home':
-            $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-            $movieController->home();
+            $movieController = new MovieController();
+            $movieController->index(); // Memanggil halaman home
             break;
 
         case 'detail':
-            $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-            $movieController->detail($_GET['id']);
+            $movieController = new MovieController();
+            if (isset($_GET['id'])) {
+                $movieController->detail($_GET['id']);
+            } else {
+                echo "ID tidak ditemukan.";
+            }
             break;
 
         case 'addMovie':
-            $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-            $movieController->addMovie();
+            $movieController = new MovieController();
+            $movieController->add();
             break;
 
-        case 'updateMovie':
-            $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-            $movieController->updateMovie();
-            break;
+        case 'update':
+                // Menangani action update
+                if (isset($_GET['id'])) {
+                    $movieController = new MovieController();
+                    $movieController->update($_GET['id']);
+                } else {
+                    echo "ID tidak ditemukan.";
+                }
+                break;
 
-        case 'deleteMovie':
-            $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-            $movieController->deleteMovie($_GET['id']);
+        case 'delete':
+            $movieController = new MovieController();
+            if (isset($_GET['id'])) {
+                $movieController->delete($_GET['id']);
+            } else {
+                echo "ID tidak ditemukan.";
+            }
             break;
 
         case 'logout':
             $userController = new UserController();
             $userController->logout();
             break;
+
+        default:
+            echo "Action tidak valid.";
+            break;
     }
 } else {
-    header('Location: view/login.php');
-    // Jika tidak ada action, arahkan ke halaman home
-    $movieController = new MovieController($conn); // Pass koneksi ke konstruktor
-    $movieController->home();
+    // Default ke halaman home
+    $movieController = new MovieController();
+    $movieController->index();
 }
 ?>
