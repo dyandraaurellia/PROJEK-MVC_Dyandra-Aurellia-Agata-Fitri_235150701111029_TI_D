@@ -3,19 +3,16 @@
 session_start();
 $conn = require 'config/db.php';
 require_once 'models/Movie.php';
-// Set koneksi database ke Movie class
 Movie::setConnection($conn);
 
-// Include controllers
 require_once 'controllers/MovieController.php';
 require_once 'controllers/UserController.php';
-// Jika pengguna belum login dan mencoba mengakses selain login atau register, arahkan ke halaman login
+
 if (!isset($_SESSION['user']) && (!isset($_GET['action']) || !in_array($_GET['action'], ['login', 'register']))) {
     header('Location: index.php?action=login');
     exit();
 }
 
-// Jika pengguna sudah login dan mencoba mengakses login atau register, arahkan ke halaman home
 if (isset($_SESSION['user']) && isset($_GET['action']) && in_array($_GET['action'], ['login', 'register'])) {
     header('Location: index.php?action=home');
     exit();
@@ -37,7 +34,7 @@ if (isset($_GET['action'])) {
 
         case 'home':
             $movieController = new MovieController();
-            $movieController->index(); // Memanggil halaman home
+            $movieController->index(); 
             break;
 
         case 'detail':
@@ -55,7 +52,6 @@ if (isset($_GET['action'])) {
             break;
 
         case 'update':
-                // Menangani action update
                 if (isset($_GET['id'])) {
                     $movieController = new MovieController();
                     $movieController->update($_GET['id']);
@@ -83,7 +79,6 @@ if (isset($_GET['action'])) {
             break;
     }
 } else {
-    // Default ke halaman home
     $movieController = new MovieController();
     $movieController->index();
 }
