@@ -8,14 +8,14 @@ class Movie {
     }
 
     public static function getAll() {
-        global $conn; // Gunakan koneksi dari db.php
+        global $conn; 
         $sql = 'SELECT * FROM movies';
         $result = $conn->query($sql);
 
         if ($result) {
-            return $result->fetch_all(MYSQLI_ASSOC); // Mengembalikan data sebagai array asosiatif
+            return $result->fetch_all(MYSQLI_ASSOC);
         } else {
-            return []; // Jika query gagal, kembalikan array kosong
+            return []; 
         }
     }
 
