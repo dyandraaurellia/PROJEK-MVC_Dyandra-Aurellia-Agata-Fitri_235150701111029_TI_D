@@ -1,13 +1,14 @@
 <?php
-$host = "localhost";
-$username = "root"; // Sesuaikan username database Anda
-$password = "";     // Sesuaikan password database Anda
-$dbname = "bioskop"; // Sesuaikan nama database Anda
+$host = 'localhost'; 
+$user = 'root'; 
+$password = ''; 
+$dbname = 'bioskop'; 
 
-$conn = new mysqli($host, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $password, $dbname); // membuat koneksi dengan database
 
-// Periksa koneksi
-if ($conn->connect_error) {
-    die("Koneksi database gagal: " . $conn->connect_error);
+if ($conn->connect_error) { //mengecek koneksi
+    die("Connection failed: " . $conn->connect_error);
 }
+
+return $conn;
 ?>
