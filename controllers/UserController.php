@@ -23,21 +23,21 @@ class UserController {
 
         if ($user && password_verify($password, $user['password'])) {
             session_start();
-            $_SESSION['user'] = $user['username']; // Menyimpan username ke session
-            header('Location: index.php?action=home'); // Arahkan ke halaman home
+            $_SESSION['user'] = $user['username']; 
+            header('Location: index.php?action=home'); 
             exit();
         } else {
             echo "Invalid username or password.";
         }
     } else {
-        require 'views/login.php'; // Tampilkan halaman login
+        require 'views/login.php';
     }
 }
 
     public function logout() {
     session_start();
-    session_destroy(); // Menghancurkan sesi
-    header('Location: index.php'); // Arahkan ke halaman utama setelah logout
+    session_destroy();
+    header('Location: index.php'); 
     exit();
 }
 
